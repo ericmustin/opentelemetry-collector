@@ -82,42 +82,51 @@ func convertSpan(s *octrace.Span) *ddSpan {
 		Meta:     map[string]string{},
 	}
 
-	span.ParentID = binary.BigEndian.Uint64(s.ParentSpanId)
+	// if int64(s.ParentSpanId) != 0 {
+	// 	span.ParentID = binary.BigEndian.Uint64(s.ParentSpanId)	
+	// }
 
-	code, ok := statusCodes[s.Status.Code]
-	if !ok {
-		code = codeDetails{
-			message: "ERR_CODE_" + strconv.FormatInt(int64(s.Status.Code), 10),
-			status:  http.StatusInternalServerError,
-		}
-	}
+	// fmt.Printf("%v", s.Status.Code)
+	// code, ok := statusCodes[s.Status.Code]
+	isErr := s.Status == nil
 
-	switch s.Kind {
-	case trace.SpanKindClient:
-		span.Type = "client"
-		if code.status/100 == 4 {
-			span.Error = 1
-		}
-	case trace.SpanKindServer:
-		span.Type = "server"
-		fallthrough
-	default:
-		if code.status/100 == 5 {
-			span.Error = 1
-		}
-	}
+	if !isErr {
 
-	if span.Error == 1 {
-		span.Meta[ext.ErrorType] = code.message
+		code, ok := statusCodes[trace.StatusCodeOK]
+		if !ok {
+			code = codeDetails{
+				message: "ERR_CODE_" + strconv.FormatInt(int64(s.Status.Code), 10),
+				status:  http.StatusInternalServerError,
+			}
+		}
+
+		switch s.Kind {
+		case trace.SpanKindClient:
+			span.Type = "client"
+			if code.status/100 == 4 {
+				span.Error = 1
+			}
+		case trace.SpanKindServer:
+			span.Type = "server"
+			fallthrough
+		default:
+			if code.status/100 == 5 {
+				span.Error = 1
+			}
+		}
+
+		if span.Error == 1 {
+			span.Meta[ext.ErrorType] = code.message
+			if msg := s.Status.Message; msg != "" {
+				span.Meta[ext.ErrorMsg] = msg
+			}
+		}
+
+		span.Meta[keyStatusCode] = strconv.Itoa(int(s.Status.Code))
+		span.Meta[keyStatus] = code.message
 		if msg := s.Status.Message; msg != "" {
-			span.Meta[ext.ErrorMsg] = msg
+			span.Meta[keyStatusDescription] = msg
 		}
-	}
-
-	span.Meta[keyStatusCode] = strconv.Itoa(int(s.Status.Code))
-	span.Meta[keyStatus] = code.message
-	if msg := s.Status.Message; msg != "" {
-		span.Meta[keyStatusDescription] = msg
 	}
 
 	// for key, val := range e.opts.GlobalTags {

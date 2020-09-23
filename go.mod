@@ -3,6 +3,7 @@ module go.opentelemetry.io/collector
 go 1.14
 
 require (
+	contrib.go.opencensus.io/exporter/ocagent v0.7.0 // indirect
 	contrib.go.opencensus.io/exporter/prometheus v0.2.0
 	github.com/DataDog/opencensus-go-exporter-datadog v0.0.0-20200406135749-5c268882acf0
 	github.com/OneOfOne/xxhash v1.2.5 // indirect

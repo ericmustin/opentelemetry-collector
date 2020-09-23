@@ -30,10 +30,16 @@ receivers:
 processors:
   batch:
   queued_retry:
+  groupbytrace:
 
 exporters:
   logging:
     logLevel: debug
+  datadog:
+    api_key: 123
+    api_url: test
+    sample_rate: 1
+    debug: false
 
 service:
 
@@ -41,12 +47,12 @@ service:
 
     traces:
       receivers: [opencensus, jaeger, zipkin]
-      processors: [batch, queued_retry]
-      exporters: [logging]
+      processors: [groupbytrace, batch]
+      exporters: [datadog]
 
-    metrics:
-      receivers: [opencensus, prometheus]
-      processors: [batch]
-      exporters: [logging]
+    # metrics:
+    #   receivers: [opencensus, prometheus]
+    #   processors: [batch]
+    #   exporters: [logging]
 
-  extensions: [health_check, pprof, zpages]
+  # extensions: [health_check, pprof, zpages]
