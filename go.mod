@@ -3,9 +3,7 @@ module go.opentelemetry.io/collector
 go 1.14
 
 require (
-	contrib.go.opencensus.io/exporter/ocagent v0.7.0 // indirect
 	contrib.go.opencensus.io/exporter/prometheus v0.2.0
-	github.com/DataDog/opencensus-go-exporter-datadog v0.0.0-20200406135749-5c268882acf0
 	github.com/OneOfOne/xxhash v1.2.5 // indirect
 	github.com/Shopify/sarama v1.27.0
 	github.com/apache/thrift v0.13.0
@@ -64,7 +62,7 @@ require (
 	google.golang.org/grpc v1.32.0
 	google.golang.org/grpc/examples v0.0.0-20200728065043-dfc0c05b2da9 // indirect
 	google.golang.org/protobuf v1.25.0
-	gopkg.in/DataDog/dd-trace-go.v1 v1.26.0
+	gopkg.in/DataDog/dd-trace-go.v1 v1.29.1
 	gopkg.in/yaml.v2 v2.3.0
 	honnef.co/go/tools v0.0.1-2020.1.5
 )
